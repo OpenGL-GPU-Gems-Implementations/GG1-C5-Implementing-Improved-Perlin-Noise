@@ -32,10 +32,12 @@ class Handler {
         virtual void objEventHandler();
         virtual void objRendererHandler();
         virtual void objUpdateHandler();
+        virtual void objPreLoopStep();
 
         static void eventHandler();
         static void rendererHandler();
         static void updateHandler();
+        static void preLoopStep();
 
         static bool registerKernel(Kernel* k);
         static bool registerHandler(Handler* h);

@@ -9,6 +9,8 @@
 #ifndef GG1_C5_HANDLER_H
 #define GG1_C5_HANDLER_H
 
+#include <chrono>
+
 #include "util/handler.h"
 #include "objects/helper.h"
 #include "objects/camera.h"
@@ -21,8 +23,14 @@ class GG1_C5_Handler : public Handler {
         void objEventHandler() override;
         void objRendererHandler() override;
         void objUpdateHandler() override;
+        void objPreLoopStep() override;
 
     private:
+        int frame = 0;
+        float dt = 0.0f;
+        int curFPS = 0;
+        std::chrono::_V2::steady_clock::time_point lastT;
+
         int relX, relY;
         bool wDown, aDown, sDown, dDown, spDown, shDown, enDown;
         Camera* camera;

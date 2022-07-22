@@ -9,6 +9,7 @@
 #include "GG1-C5-handler.h"
 
 GG1_C5_Handler::GG1_C5_Handler() {
+    camera = new Camera();
 
 }
 
@@ -46,8 +47,8 @@ void GG1_C5_Handler::objEventHandler() {
                         break;
                     case SDLK_RETURN: // enter
                         enDown = true;
-                        std::cout << "\nCamera position: " << camera->position.x << " " << camera->position.y << " " << camera->position.z;
-                        std::cout << "\nCamera orientation: " << camera->yaw << " " << camera->pitch;
+                        std::cout << "Camera position: " << camera->position.x << " " << camera->position.y << " " << camera->position.z << endl;
+                        std::cout << "Camera orientation: " << camera->yaw << " " << camera->pitch << endl;
                         break;
                 }
                 break;
@@ -99,5 +100,38 @@ void GG1_C5_Handler::objRendererHandler() {
 }
 
 void GG1_C5_Handler::objUpdateHandler() {
+    // update time
+    frame ++;
+    auto curT = std::chrono::steady_clock::now();
+    std::chrono::duration<float> diff = curT - lastT;
+    lastT = std::chrono::steady_clock::now();
+    dt = diff.count();
+    curFPS = (int)(1/dt);
+
+    // update title
+    string atitle = kernel->getTitle() + string(" - FPS: ") + std::to_string(curFPS) + string(" - Frame: ") + std::to_string(frame);
+    SDL_SetWindowTitle(kernel->getWindow(), atitle.c_str());
+
+    // update camera
+    int end = NONE;
+    if (wDown)
+        end |= FORWARD;
+    if (aDown)
+        end |= LEFT;
+    if (sDown)
+        end |= BACKWARD;
+    if (dDown)
+        end |= RIGHT;
+    if (spDown)
+        end |= UP;
+    if (shDown)
+        end |= DOWN;
+    camera->updateKeyboard(end, dt);
+    camera->updateMouse(relX, -relY);
+}
+
+void GG1_C5_Handler::objPreLoopStep() {
+    lastT = std::chrono::steady_clock::now();
     
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 }

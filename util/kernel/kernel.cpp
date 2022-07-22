@@ -33,6 +33,34 @@ Kernel::~Kernel() {
 }
 
 /**
+ * @brief Gets title of the kernel
+ */
+string Kernel::getTitle() {
+    return title;
+}
+
+/**
+ * @brief Gets x dimension of kernel in pixels
+ */
+int Kernel::getRX() {
+    return rx;
+}
+
+/**
+ * @brief Gets x dimension of kernel in pixels
+ */
+int Kernel::getRY() {
+    return ry;
+}
+
+/**
+ * @brief Gets the window object of the kernel
+ */
+SDL_Window* Kernel::getWindow() {
+    return window;
+}
+
+/**
  * @brief Computes render data based on a function that determines the objects in the scene, and passes render to the screen. A valid renderer handler must have already been called in order to avoid undefined behavior.
  */
 void Kernel::render() {
@@ -152,6 +180,17 @@ bool Kernel::registerUpdateHandler(void (*f)()) {
 }
 
 /**
+ * @brief Registers a pre loop function to be called immediately before the render loop
+ * 
+ * @param f Function in question
+ * @return bool representing the success of the operation
+ */
+bool Kernel::registerPreLoopStep(void (*f)()) {
+    preLoopStep = f;
+    return true;
+}
+
+/**
  * @brief Creates a window object with a registered OpenGL context
  * 
  * @param title Title of the window
@@ -227,6 +266,8 @@ void Kernel::start() {
     
     SDL_Log("Render loop started");
     running = true;
+    
+    preLoopStep();
     while (running) {
         // handle events
         eventHandler();

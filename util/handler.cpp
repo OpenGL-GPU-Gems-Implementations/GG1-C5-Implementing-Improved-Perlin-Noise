@@ -35,10 +35,18 @@ void Handler::updateHandler() {
     handler->objUpdateHandler();
 }
 
+/**
+ * @brief Handles updates to all objects in the scene via registered handler object
+ */
+void Handler::preLoopStep() {
+    handler->objPreLoopStep();
+}
+
 // Stand-ins
 void Handler::objEventHandler() {}
 void Handler::objRendererHandler() {}
 void Handler::objUpdateHandler() {}
+void Handler::objPreLoopStep() {}
 
 /**
  * @brief Register handler object. Also registers handler functions in registered kernel. Kernel MUST be registered before handler.
@@ -56,6 +64,7 @@ bool Handler::registerHandler(Handler* h) {
     kernel->registerEventHandler(eventHandler);
     kernel->registerRendererHandler(rendererHandler);
     kernel->registerUpdateHandler(updateHandler);
+    kernel->registerPreLoopStep(preLoopStep);
 
     cout << "Handler successfully registered" << endl;
 

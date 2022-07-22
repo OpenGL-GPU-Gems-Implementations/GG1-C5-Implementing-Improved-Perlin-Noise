@@ -44,11 +44,20 @@ class Kernel {
         bool registerRendererHandler(void (*f)());
         bool registerUpdateHandler(void (*f)());
 
+        // A function that runs immediately before the start loop
+        bool registerPreLoopStep(void (*f)());
+
         // starts window render loop
         void start();
         
         // stops window render loop
         void stop();
+
+        // getter functions
+        string getTitle();
+        int getRX();
+        int getRY();
+        SDL_Window* getWindow();
 
     private:
         SDL_Window* createWindow(string title, int rx, int ry);
@@ -68,6 +77,7 @@ class Kernel {
         void (*eventHandler)() = NULL;
         void (*rendererHandler)() = NULL;
         void (*updateHandler)() = NULL;
+        void (*preLoopStep)() = NULL;
 
         bool running = false;
 };
