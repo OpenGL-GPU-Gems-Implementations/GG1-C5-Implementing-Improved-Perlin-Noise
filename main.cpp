@@ -11,12 +11,18 @@
 using std::cout;
 using std::string;
 
-#include "kernel/kernel.h"
-#include "handlers/handler.h"
+#include "util/kernel/kernel.h"
+#include "util/handler.h"
+#include "GG1-C5-handler.h"
 
 int main(int argc, char* argv[]) {
     Kernel* kernel = new Kernel(string("Hola Terra!"), 500, 500);
-    
+    GG1_C5_Handler* handler = new GG1_C5_Handler();
+
+    GG1_C5_Handler::registerKernel(kernel);
+    GG1_C5_Handler::registerHandler(handler);
+
+    kernel->start();
     
     delete kernel;
 

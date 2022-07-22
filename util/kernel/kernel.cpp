@@ -130,6 +130,28 @@ bool Kernel::registerEventHandler(void (*f)()) {
 }
 
 /**
+ * @brief Registers a renderer handler to manage render calls to the OpenGL context
+ * 
+ * @param f Function that handles rendering updates
+ * @return bool representing the success of the operation
+ */
+bool Kernel::registerRendererHandler(void (*f)()) {
+    rendererHandler = f;
+    return true;
+}
+
+/**
+ * @brief Registers an update handler to manage updates in the objects within the SDL window
+ * 
+ * @param f Function that handles scene objects
+ * @return bool representing the success of the operation
+ */
+bool Kernel::registerUpdateHandler(void (*f)()) {
+    updateHandler = f;
+    return true;
+}
+
+/**
  * @brief Creates a window object with a registered OpenGL context
  * 
  * @param title Title of the window

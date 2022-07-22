@@ -1,7 +1,7 @@
 # Eron Ristich
 # 7/19/2022
 
-OBJS = handler.o kernel.o main.o
+OBJS = gg1-c5-handler.o handler.o kernel.o main.o
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG)
@@ -12,13 +12,16 @@ INC = -Iinclude
 main.exe : $(OBJS)
 	$(CC) $(LFLAGS) $(INC) $(OBJS) -o main.exe $(LDLIBS)
 
-kernel.o : kernel/kernel.h kernel/kernel.cpp
-	$(CC) $(CFLAGS) $(INC) kernel/kernel.cpp
+kernel.o : util/kernel/kernel.h util/kernel/kernel.cpp
+	$(CC) $(CFLAGS) $(INC) util/kernel/kernel.cpp
 
-handler.o : handlers/handler.h handlers/handler.cpp
-	$(CC) $(CFLAGS) $(INC) handlers/handler.cpp
+handler.o : util/kernel/kernel.h util/handler.h util/handler.cpp
+	$(CC) $(CFLAGS) $(INC) util/handler.cpp
 
-main.o : kernel/kernel.h handlers/handler.h main.cpp
+gg1-c5-handler.o : util/handler.h util/kernel/kernel.h GG1-C5-handler.h GG1-C5-handler.cpp
+	$(CC) $(CFLAGS) $(INC) GG1-C5-handler.cpp
+
+main.o : util/kernel/kernel.h util/handler.h GG1-C5-handler.h main.cpp
 	$(CC) $(CFLAGS) $(INC) main.cpp
 
 clean:
