@@ -14,6 +14,7 @@
 #include "util/handler.h"
 #include "objects/helper.h"
 #include "objects/camera.h"
+#include "GG1-C5/src/perlin/superquadric.h"
 
 class GG1_C5_Handler : public Handler {
     public:
@@ -34,6 +35,15 @@ class GG1_C5_Handler : public Handler {
         int relX, relY;
         bool wDown, aDown, sDown, dDown, spDown, shDown, enDown;
         Camera* camera;
+
+        // scene objects
+        /* ----- CUBE ----- */
+        unsigned int cubeVBO, cubeVAO;
+        Shader* cubeShader;
+
+        /* ----- MINI MESH ----- */
+        MiniMesh* miniMesh;
+        
 };
 
 #endif

@@ -14,6 +14,8 @@ using std::string;
 #include "util/kernel/kernel.h"
 #include "util/handler.h"
 #include "GG1-C5-handler.h"
+#include "GG1-C5/src/perlin/cspline/cspline.h"
+#include "GG1-C5/src/perlin/superquadric.h"
 
 int main(int argc, char* argv[]) {
     Kernel* kernel = new Kernel(string("Hola Terra!"), 500, 500);

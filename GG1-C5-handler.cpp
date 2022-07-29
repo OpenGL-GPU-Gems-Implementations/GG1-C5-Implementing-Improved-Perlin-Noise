@@ -9,8 +9,9 @@
 #include "GG1-C5-handler.h"
 
 GG1_C5_Handler::GG1_C5_Handler() {
-    camera = new Camera();
-
+    wDown = false; aDown = false; sDown = false; dDown = false; spDown = false; shDown = false; enDown = false;
+    camera = new Camera(glm::vec3(1));
+    camera->movementSpeed = 20.0f;
 }
 
 GG1_C5_Handler::~GG1_C5_Handler() {
@@ -96,7 +97,29 @@ void GG1_C5_Handler::objEventHandler() {
 }
 
 void GG1_C5_Handler::objRendererHandler() {
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)kernel->getRX() / (float)kernel->getRY(), 0.1f, 100.0f);
+    glm::mat4 view = camera->getViewMatrix();
+    
+    // perlin cube
+    cubeShader->use();
+    cubeShader->setVec3("objColor", 0.5f, 0.31f, 1.0f);
+    cubeShader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    cubeShader->setVec3("lightPos", 2.0f, 2.0f, 2.0f);
+    cubeShader->setVec3("viewPos", camera->position);
+    cubeShader->setMat4("projection", projection);
+    cubeShader->setMat4("view", view);
 
+    glm::mat4 model = glm::mat4(1.0f);
+    cubeShader->setMat4("model", model);
+
+    /*
+    glBindVertexArray(cubeVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    */
+
+    // mini mesh
+    miniMesh->draw();
 }
 
 void GG1_C5_Handler::objUpdateHandler() {
@@ -134,4 +157,69 @@ void GG1_C5_Handler::objPreLoopStep() {
     lastT = std::chrono::steady_clock::now();
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    };
+
+    glGenVertexArrays(1, &cubeVAO);
+    glGenBuffers(1, &cubeVBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(cubeVAO);
+
+    cubeShader = new Shader("GG1-C5/src/gl/perlin/cube.vs", "GG1-C5/src/gl/perlin/cube.fs");
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // mini mesh
+    miniMesh = genSuperquadric(20, 20, 20);
 }
