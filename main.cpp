@@ -18,7 +18,7 @@ using std::string;
 #include "GG1-C5/src/perlin/superquadric.h"
 
 int main(int argc, char* argv[]) {
-    Kernel* kernel = new Kernel(string("Hola Terra!"), 500, 500);
+    Kernel* kernel = new Kernel(string("GG1-C5"), 500, 500);
     GG1_C5_Handler* handler = new GG1_C5_Handler();
 
     GG1_C5_Handler::registerKernel(kernel);

@@ -119,7 +119,8 @@ void GG1_C5_Handler::objRendererHandler() {
     */
 
     // mini mesh
-    miniMesh->draw();
+    //miniMesh->draw();
+    superquadric->draw();
 }
 
 void GG1_C5_Handler::objUpdateHandler() {
@@ -221,5 +222,6 @@ void GG1_C5_Handler::objPreLoopStep() {
     glEnableVertexAttribArray(1);
 
     // mini mesh
-    miniMesh = genSuperquadric(20, 20, 20);
+    //miniMesh = genCube(20, 20, 20);
+    superquadric = new Superquadric(5, 4);
 }

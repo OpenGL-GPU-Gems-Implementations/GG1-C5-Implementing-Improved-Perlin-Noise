@@ -1,7 +1,7 @@
 /**
  * @file superquadric.cpp
  * @author Eron Ristich (eron@ristich.com)
- * @brief Functions for generating the mesh of a noise-displaced superquadric 
+ * @brief Functions for generating the mesh of a noise-displaced cube and superquadric
  * @version 0.1
  * @date 2022-07-26
  */
@@ -29,8 +29,6 @@ MiniMesh::MiniMesh(vector<float>* vertices, vector<unsigned int>* strips, int xn
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-
 }
 
 MiniMesh::~MiniMesh() {
@@ -103,8 +101,8 @@ glm::vec3 onEdge(int px, int py, int pz, int x, int y, int z) {
     return glm::vec3(resx, resy, resz);
 }
 
-// generates a superquadric in the first octant with a corner at the origin. use translation/scaling functions to change relative scale
-MiniMesh* genSuperquadric(int x, int y, int z) {
+// generates a cube in the first octant with a corner at the origin. use translation/scaling functions to change relative scale
+MiniMesh* genCube(int x, int y, int z) {
     Perlin* perlin = new Perlin();
     
     // generate vertices in order +-x, +-y, +-z
@@ -242,4 +240,124 @@ MiniMesh* genSuperquadric(int x, int y, int z) {
 
     delete perlin;
     return miniMesh;
+}
+
+// superquadric
+glm::vec3 projectOnUnitSuperquadric(int power, glm::vec3 point) {
+    // project point onto unit sphere (normalize point vector)
+    point = glm::normalize(point);
+
+    // compute displacement constant
+    float tx = pow(abs(point.x), power);
+    float ty = pow(abs(point.y), power);
+    float tz = pow(abs(point.z), power);
+    float a = pow(1/(tx+ty+tz), 1.0f / power);
+    
+    return point*a;
+}
+
+int Superquadric::indexForEdge(Lookup& lookup, vector<glm::vec3>& vertices, int first, int second) {
+    Lookup::key_type key(first, second);
+    if (key.first > key.second)
+        std::swap(key.first, key.second);
+    
+    auto inserted = lookup.insert({key, vertices.size()});
+    if (inserted.second) {
+        auto& edge0 = vertices[first];
+        auto& edge1 = vertices[second];
+        auto point = normalize(edge0 + edge1);
+        vertices.push_back(point);
+    }
+    
+    return inserted.first->second;
+}
+
+Superquadric::Superquadric(int d, int power) {
+    vertices = new vector<float>();
+    indices = new vector<unsigned int>();
+
+    assorted = new vector<glm::vec3>();
+    triangles = new vector<Triangle>();
+
+    genMesh(d, power);
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER,
+                vertices->size() * sizeof(float),       // size of vertices buffer
+                &(*vertices)[0],                        // pointer to first element (C++ vectors are contiguous so order is preserved [&v[n] == &v[0] + n for all 0 <= n < v.size()])
+                GL_STATIC_DRAW);
+    
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                indices->size() * sizeof(unsigned int),  // size of indices buffer
+                &(*indices)[0],                          // pointer to first element (see above for explanation)
+                GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+}
+
+Superquadric::~Superquadric() {
+
+}
+
+void Superquadric::subdivide() {
+    Lookup lookup;
+    vector<Triangle> result;
+    
+    for (auto&& each:*triangles) {
+        std::array<int, 3> mid;
+        for (int edge = 0; edge < 3; edge ++) {
+            mid[edge] = indexForEdge(lookup, *assorted, each.indices[edge], each.indices[(edge+1)%3]);
+        }
+    
+        result.push_back({each.indices[0], mid[0], mid[2]});
+        result.push_back({each.indices[1], mid[1], mid[0]});
+        result.push_back({each.indices[2], mid[2], mid[1]});
+        result.push_back({mid[0], mid[1], mid[2]});
+    }
+    
+    *triangles = result;
+}
+
+// implementing algorithm from https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
+void Superquadric::genMesh(int detail, int power) {
+    *assorted = icosahedron::vertices;
+    *triangles = icosahedron::triangles;
+    
+    for (int i = 0; i < detail; i ++)
+        subdivide();
+
+    Perlin perlin = Perlin();
+
+    // gl ready vectors
+    for (auto&& each:*assorted) {
+        glm::vec3 temp = projectOnUnitSuperquadric(power, each);
+        temp += normalize(temp) * perlin.at(temp) * 0.25f;
+        vertices->push_back(temp.x);
+        vertices->push_back(temp.y);
+        vertices->push_back(temp.z);
+    }
+
+    for (auto&& each:*triangles) {
+        indices->push_back(each.indices[0]);
+        indices->push_back(each.indices[1]);
+        indices->push_back(each.indices[2]);
+    }
+}
+
+void Superquadric::draw() {
+    glBindVertexArray(VAO);
+
+    glDrawElements(
+        GL_TRIANGLES,      // mode
+        indices->size(),   // count
+        GL_UNSIGNED_INT,   // type
+        (void*)0           // element array buffer offset
+    );
 }

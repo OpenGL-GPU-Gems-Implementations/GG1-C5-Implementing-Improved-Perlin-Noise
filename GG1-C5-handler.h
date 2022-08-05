@@ -43,6 +43,7 @@ class GG1_C5_Handler : public Handler {
 
         /* ----- MINI MESH ----- */
         MiniMesh* miniMesh;
+        Superquadric* superquadric;
         
 };
 
