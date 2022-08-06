@@ -10,7 +10,7 @@
 
 GG1_C5_Handler::GG1_C5_Handler() {
     wDown = false; aDown = false; sDown = false; dDown = false; spDown = false; shDown = false; enDown = false;
-    camera = new Camera(glm::vec3(1));
+    camera = new Camera(glm::vec3(2.8963, 0.35203, -1.65028), glm::vec3(0, 1, 0), -209.7, -6.2);
     camera->movementSpeed = 20.0f;
 }
 
@@ -102,9 +102,10 @@ void GG1_C5_Handler::objRendererHandler() {
     
     // perlin cube
     cubeShader->use();
-    cubeShader->setVec3("objColor", 0.5f, 0.31f, 1.0f);
+    cubeShader->setInt("iFrame", frame);
+    cubeShader->setVec3("objColor", 1.0f, 0.3137f, 0.5569f);//0.31f, 0.5f, 1.0f);//0.5f, 0.31f, 1.0f);
     cubeShader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    cubeShader->setVec3("lightPos", 2.0f, 2.0f, 2.0f);
+    cubeShader->setVec3("lightPos", -2.0f, -2.0f, -2.0f);
     cubeShader->setVec3("viewPos", camera->position);
     cubeShader->setMat4("projection", projection);
     cubeShader->setMat4("view", view);
@@ -223,5 +224,5 @@ void GG1_C5_Handler::objPreLoopStep() {
 
     // mini mesh
     //miniMesh = genCube(20, 20, 20);
-    superquadric = new Superquadric(5, 4);
+    superquadric = new Superquadric(7, 2);
 }

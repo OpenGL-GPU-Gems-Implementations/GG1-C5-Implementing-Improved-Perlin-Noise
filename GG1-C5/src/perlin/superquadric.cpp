@@ -338,7 +338,7 @@ void Superquadric::genMesh(int detail, int power) {
     // gl ready vectors
     for (auto&& each:*assorted) {
         glm::vec3 temp = projectOnUnitSuperquadric(power, each);
-        temp += normalize(temp) * perlin.at(temp) * 0.25f;
+        temp += normalize(temp) * perlin.at(temp*3.0f) * 0.0f;//1f;
         vertices->push_back(temp.x);
         vertices->push_back(temp.y);
         vertices->push_back(temp.z);
