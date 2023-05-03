@@ -1,7 +1,5 @@
 # GG1-C5-Implementing-Improved-Perlin-Noise
-From GPU Gems book 1, part 1, chapter 5; Implementing Improved Perlin Noise.
-
-From [GPU Gems book 1, part 1, chapter 5.](https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-5-implementing-improved-perlin-noise)
+From [GPU Gems book 1, part 1, chapter 5.](https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-5-implementing-improved-perlin-noise); Implementing Improved Perlin Noise.
  Ken Perlin, New York University
 
 ## Concepts Implemented
@@ -14,12 +12,6 @@ From [GPU Gems book 1, part 1, chapter 5.](https://developer.nvidia.com/gpugems/
 | ------------- | ------------- | ------------- |
 | ![Lumpy sphere](https://user-images.githubusercontent.com/42471346/183234567-4909b99b-523c-4097-ba27-0406dab23166.png) | ![Marbled sphere](https://user-images.githubusercontent.com/42471346/183234169-68529d26-26f5-44b0-adf9-9da85ca1d55a.png)  | ![Crinkled sphere](https://user-images.githubusercontent.com/42471346/183234371-7ec37b62-7bda-4712-aef1-80fdedf2d21b.png) |
 | ![Lumpy superquadric](https://user-images.githubusercontent.com/42471346/183234544-a8311367-fc26-4d5e-84e9-91baeaf63428.png) | ![Marbled superquadric](https://user-images.githubusercontent.com/42471346/183234267-7e4b58a7-f188-4c48-bfad-082053497d10.png) | ![Crinkled superquadric](https://user-images.githubusercontent.com/42471346/183234414-dfe76c26-4411-4bf9-9427-635f20990f57.png) |
-
-## Concepts Reimagined
-* TBD
-
-## Concepts explored/reimplemented in other repositories
-* TBD
 
 ## Compilation and installation instructions
 The graphics for this engine are handled using OpenGL, and the following instructions are for setting up the code in Windows. 
